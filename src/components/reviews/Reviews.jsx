@@ -3,6 +3,7 @@ import Review from '../review/Review'
 import "./Reviews.scss";
 import newRequest from '../../utils/newRequest.js';
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import axios from 'axios';
 
 
 export default function Reviews({ gigId }) {
@@ -10,8 +11,8 @@ export default function Reviews({ gigId }) {
 
     const { isLoading, error, data } = useQuery({
         queryKey: ["reviews"],
-        queryFn: () =>
-            newRequest.get(`/reviews/${gigId}`).then((res) => {
+        queryFn: async () =>
+            await axios.get(`/reviews/${gigId}`).then((res) => {
                 return res.data;
             }),
     });
