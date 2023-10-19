@@ -12,14 +12,14 @@ export default function Reviews({ gigId }) {
     const { isLoading, error, data } = useQuery({
         queryKey: ["reviews"],
         queryFn: async () =>
-            await axios.get(`/reviews/${gigId}`).then((res) => {
+            await axios.get(`https://vsfiverrapp1.onrender.com/api/reviews/${gigId}`).then((res) => {
                 return res.data;
             }),
     });
 
     const mutation = useMutation({
-        mutationFn: (review)=>{
-            return newRequest.post('/reviews', review)
+        mutationFn: async (review)=>{
+            return axios.post('https://vsfiverrapp1.onrender.com/api/reviews', review)
         },
         onSuccess: ()=>{
             queryClient.invalidateQueries(['reviews'])
