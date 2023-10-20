@@ -3,41 +3,44 @@ import Review from '../review/Review'
 import "./Reviews.scss";
 import newRequest from '../../utils/newRequest.js';
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import axios from 'axios';
 
 
 export default function Reviews({ gigId }) {
+
+    let desc = ''
+    let star = null
     const queryClient = useQueryClient()
 
     const { isLoading, error, data } = useQuery({
         queryKey: ["reviews"],
-        queryFn: async () =>
-            await axios.get(`https://vsfiverrapp1.onrender.com/api/reviews/${gigId}`).then((res) => {
+        queryFn: () =>
+            newRequest.get(`/reviews/${gigId}`).then((res) => {
                 return res.data;
             }),
     });
 
-    const mutation = useMutation({
-        mutationFn: async (review)=>{
-            return axios.post('https://vsfiverrapp1.onrender.com/api/reviews', review)
-        },
-        onSuccess: ()=>{
-            queryClient.invalidateQueries(['reviews'])
-        }
-    })
-    const handleSubmit = (e) => {
-        e.preventDefault()
-        const desc = e.target[0].value
-        const star = e.target[1].value
-        console.log(gigId, desc, star)
-        mutation.mutate({gigId, desc, star})
+    // const mutation = useMutation({
+    //     mutationFn: (review)=>{
+    //         return newRequest.post('/reviews', review)
+    //     },
+    //     onSuccess: ()=>{
+    //         queryClient.invalidateQueries(['reviews'])
+    //     }
+    // })
+    const handleSubmit = async (e) => {
+        // e.preventDefault()
+        desc = e.target[0].value
+        star = e.target[1].value
+        const res = await newRequest.post('/reviews', {desc, star, gigId})
+        return res.data
+        // mutation.mutate({gigId, desc, star})
     }
 
     return (
         <div className="reviews">
             <h2>Reviews</h2>
             {isLoading ? "Loading..." : error ? "something went wrong" : data.map((review) => (
-                <Review key={review._id} review={review} />
+                <Review key={review._id} review={review} desc={desc} star={star}/>
             ))}
             <div className="add">
                 <h3>Add a new Review</h3>
