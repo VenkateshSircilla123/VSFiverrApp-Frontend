@@ -1,14 +1,18 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import "./Review.scss"
 import { useQuery } from "@tanstack/react-query";
 import newRequest from '../../utils/newRequest.js';
-export default function Review({review}) {
-  const { isLoading, error, data } = useQuery({
+export default function Review({review,desc,star}) {
+  
+  const { isLoading, error, data,refetch } = useQuery({
     queryKey: [review.userId],
     queryFn: async () => await newRequest.get(`/users/${review.userId}`).then(res => {
       return res.data
     })
   })
+  useEffect(()=>{
+    refetch()
+  },[star,desc])
   return (
       <div className="review">
         {isLoading ? "Loading..." : error ? "something went wrong" : 
