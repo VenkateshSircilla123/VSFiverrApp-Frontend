@@ -7,8 +7,6 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
 export default function Reviews({ gigId }) {
 
-    let desc = ''
-    let star = null
     const queryClient = useQueryClient()
 
     const { isLoading, error, data } = useQuery({
@@ -19,28 +17,26 @@ export default function Reviews({ gigId }) {
             }),
     });
 
-    // const mutation = useMutation({
-    //     mutationFn: (review)=>{
-    //         return newRequest.post('/reviews', review)
-    //     },
-    //     onSuccess: ()=>{
-    //         queryClient.invalidateQueries(['reviews'])
-    //     }
-    // })
+    const mutation = useMutation({
+        mutationFn: (review)=>{
+            return newRequest.post('/reviews', review)
+        },
+        onSuccess: ()=>{
+            queryClient.invalidateQueries(['reviews'])
+        }
+    })
     const handleSubmit = async (e) => {
-        // e.preventDefault()
-        desc = e.target[0].value
-        star = e.target[1].value
-        const res = await newRequest.post('/reviews', {desc, star, gigId})
-        return res.data
-        // mutation.mutate({gigId, desc, star})
+        e.preventDefault()
+        const desc = e.target[0].value
+        const star = e.target[1].value
+        mutation.mutate({gigId, desc, star})
     }
 
     return (
         <div className="reviews">
             <h2>Reviews</h2>
             {isLoading ? "Loading..." : error ? "something went wrong" : data.map((review) => (
-                <Review key={review._id} review={review} desc={desc} star={star}/>
+                <Review key={review._id} review={review} />
             ))}
             <div className="add">
                 <h3>Add a new Review</h3>
