@@ -29,6 +29,7 @@ export default function Reviews({ gigId }) {
         e.preventDefault()
         const desc = e.target[0].value
         const star = e.target[1].value
+        console.log(gigId, desc, star)
         mutation.mutate({gigId, desc, star})
     }
 
